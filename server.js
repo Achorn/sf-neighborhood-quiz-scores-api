@@ -1,7 +1,8 @@
 const express = require("express");
-const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
+const app = express();
+const bodyParser = require("body-parser");
 
 const scoreSchema = mongoose.Schema({
   username: { type: String, required: true, maxLength: 10 },
@@ -9,8 +10,10 @@ const scoreSchema = mongoose.Schema({
   time: { type: Number, required: true, min: 0 },
   date: { type: Date, default: Date.now },
 });
+const Score = mongoose.Model("Score", scoreSchema);
 
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
   res.json({ greeting: "hello from root" });
@@ -28,10 +31,17 @@ app.get("/api/scores", (req, res) => {
 });
 
 app.post("/api/score", (req, res) => {
-  //create new score from model
-  //  save score
-  // send error if fail
-  // send response if sucess
+  let score = new Score({
+    username: rec.body.username,
+    score: rec.body.score,
+    time: rec.body.time,
+    date: new Date(),
+  });
+
+  score
+    .save()
+    .then((data) => res.json({ data: data }))
+    .catch((err) => res.json({ err: err }));
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {

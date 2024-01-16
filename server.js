@@ -1,6 +1,14 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const mongoose = require("mongoose");
+
+const scoreSchema = mongoose.Schema({
+  username: { type: String, required: true, maxLength: 10 },
+  score: { type: Number, required: true },
+  time: { type: Number, required: true },
+  date: { type: Date, default: Date.now },
+});
 
 app.use(cors());
 

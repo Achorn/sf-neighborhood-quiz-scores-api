@@ -17,6 +17,7 @@ const Score = mongoose.model("Score", scoreSchema);
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.json({ greeting: "hello from root" });
@@ -28,14 +29,13 @@ app.get("/api", (req, res) => {
 
 //get scores limit
 app.get("/api/scores", (req, res) => {
-  //get scores from mongo db
-  // send json of top 10 scores
-  res.json({ scores: "scores go here" });
+  Score.find({})
+    .then((data) => res.json(data))
+    .catch((err) => res.json({ err: err }));
 });
 
 app.post("/api/score", (req, res) => {
   console.log(req.body);
-  res.json({});
   let score = new Score({
     username: req.body.username,
     score: req.body.score,

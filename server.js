@@ -3,6 +3,9 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const app = express();
 const bodyParser = require("body-parser");
+require("dotenv").config();
+
+mongoose.connect(process.env.MONGO_URI);
 
 const scoreSchema = mongoose.Schema({
   username: { type: String, required: true, maxLength: 10 },
@@ -10,7 +13,7 @@ const scoreSchema = mongoose.Schema({
   time: { type: Number, required: true, min: 0 },
   date: { type: Date, default: Date.now },
 });
-const Score = mongoose.Model("Score", scoreSchema);
+const Score = mongoose.model("Score", scoreSchema);
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -31,10 +34,12 @@ app.get("/api/scores", (req, res) => {
 });
 
 app.post("/api/score", (req, res) => {
+  console.log(req.body);
+  res.json({});
   let score = new Score({
-    username: rec.body.username,
-    score: rec.body.score,
-    time: rec.body.time,
+    username: req.body.username,
+    score: req.body.score,
+    time: req.body.time,
     date: new Date(),
   });
 

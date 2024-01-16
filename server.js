@@ -4,6 +4,10 @@ const cors = require("cors");
 
 app.use(cors());
 
+app.get("/", (req, res) => {
+  res.json({ greeting: "hello from root" });
+});
+
 app.get("/api", (req, res) => {
   res.json({ greeting: "Hello, world!" });
 });

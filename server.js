@@ -42,6 +42,7 @@ app.post("/api/score", (req, res) => {
     score: req.body.score,
     time: req.body.time,
     date: new Date(),
+    map: req.body.map,
   });
 
   score

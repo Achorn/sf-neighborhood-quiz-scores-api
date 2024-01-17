@@ -12,7 +12,7 @@ const scoreSchema = mongoose.Schema({
   score: { type: Number, required: true, min: 0, max: 1 },
   time: { type: Number, required: true, min: 0 },
   date: { type: Date, default: Date.now },
-  map: Number,
+  map: String,
 });
 const Score = mongoose.model("Score", scoreSchema);
 

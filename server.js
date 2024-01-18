@@ -31,9 +31,10 @@ app.get("/api", (req, res) => {
 //get scores limit
 app.get("/api/scores", (req, res) => {
   var filters = { map: req.query.map || "all" };
+  limit = req.query.limit;
   Score.find({ ...filters })
     .sort({ score: -1, time: 1 })
-    .limit(10)
+    .limit(limit)
     .then((data) => res.json(data))
     .catch((err) => res.json({ err: err }));
 });

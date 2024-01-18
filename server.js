@@ -30,13 +30,15 @@ app.get("/api", (req, res) => {
 
 //get scores limit
 app.get("/api/scores", (req, res) => {
-  Score.find({})
+  var filters = { map: "all" };
+  Score.find({ ...filters })
+    .sort({ score: -1, time: -1 })
+    .limit(10)
     .then((data) => res.json(data))
     .catch((err) => res.json({ err: err }));
 });
 
 app.post("/api/score", (req, res) => {
-  console.log(req.body);
   let score = new Score({
     username: req.body.username,
     score: req.body.score,

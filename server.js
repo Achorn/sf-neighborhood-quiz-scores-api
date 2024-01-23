@@ -1,59 +1,38 @@
 const express = require("express");
+require("dotenv").config();
 const cors = require("cors");
 const mongoose = require("mongoose");
-const app = express();
+const scoreRoutes = require("./routes/scores");
 const bodyParser = require("body-parser");
-require("dotenv").config();
 
-mongoose.connect(process.env.MONGO_URI);
+const app = express();
 
-const scoreSchema = mongoose.Schema({
-  username: { type: String, required: true, maxLength: 10 },
-  score: { type: Number, required: true, min: 0, max: 1 },
-  time: { type: Number, required: true, min: 0 },
-  date: { type: Date, default: Date.now },
-  map: String,
-});
-const Score = mongoose.model("Score", scoreSchema);
-
+// Middleware
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
+app.use((req, res, next) => {
+  console.log(req.path, req.method);
+  next();
+});
+
+//Routes
+app.use("/api/scores", scoreRoutes);
 
 app.get("/", (req, res) => {
-  res.json({ greeting: "hello from root" });
+  res.json({ greeting: "hello from Scores API" });
 });
 
-app.get("/api", (req, res) => {
-  res.json({ greeting: "Hello, world!" });
-});
-
-//get scores limit
-app.get("/api/scores", (req, res) => {
-  var filters = { map: req.query.map || "all" };
-  limit = req.query.limit;
-  Score.find({ ...filters })
-    .sort({ score: -1, time: 1 })
-    .limit(limit)
-    .then((data) => res.json(data))
-    .catch((err) => res.json({ err: err }));
-});
-
-app.post("/api/score", (req, res) => {
-  let score = new Score({
-    username: req.body.username,
-    score: req.body.score,
-    time: req.body.time,
-    date: new Date(),
-    map: req.body.map,
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    const listener = app.listen(process.env.PORT || 3000, () => {
+      console.log(
+        "Your app connected to db & is listening on port " +
+          listener.address().port
+      );
+    });
+  })
+  .catch((err) => {
+    console.log(err);
   });
-
-  score
-    .save()
-    .then((data) => res.json({ data: data }))
-    .catch((err) => res.json({ err: err }));
-});
-
-const listener = app.listen(process.env.PORT || 3000, () => {
-  console.log("Your app is listening on port " + listener.address().port);
-});
